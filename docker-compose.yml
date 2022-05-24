@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
 
-  crm-db:
+  crm-db-service:
+    container_name: crm_mysql_db_container
     image: mysql:latest
     restart: always
     environment:
@@ -14,3 +15,15 @@ services:
       - '3306:3306'
     expose:
       - '3306'
+  crm-web-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crm_webapp_container
+    environment:
+      spring_datasource_url: "jdbc:mysql://crm-db-service:3306/crm_db"
+    depends_on:
+      - crm-db-service
+    ports:
+      - '8080:8080'
+    restart: always
